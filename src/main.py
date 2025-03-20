@@ -30,7 +30,7 @@ def main():
     app = FastMCP(name="jira-tools")
     
     # Import tools
-    from src.tools.issues import search_issues
+    from src.tools.issues import search_issues, create_issue
     from src.tools.projects import list_projects
     
     # Register tools using the add_tool method
@@ -44,6 +44,12 @@ def main():
         list_projects,
         name="list_projects",
         description="List JIRA projects for the authenticated user"
+    )
+    
+    app.add_tool(
+        create_issue,
+        name="create_issue",
+        description="Create a new JIRA issue in a specified project"
     )
     
     # Start the FastMCP application

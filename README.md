@@ -35,6 +35,18 @@ Search for JIRA issues using JQL (JIRA Query Language).
 - max_results: Maximum number of results to return (default: 10)
 - fields: Comma-separated list of fields to include in the results (default: "summary,status,assignee,priority,issuetype")
 
+### Create Issue
+
+Create a new JIRA issue in a specified project.
+
+**Parameters:**
+- project_key: The key of the project to create the issue in (e.g., "DEMO")
+- summary: Issue summary
+- description: Issue description (optional)
+- issue_type: Type of issue (default: "Task", can be "Bug", "Story", etc.)
+- priority: Priority of the issue (optional, e.g., "High", "Medium", "Low")
+- assignee: Username to assign the issue to (optional)
+
 ### List Projects
 
 Lists JIRA projects for the authenticated user.
@@ -47,6 +59,9 @@ Lists JIRA projects for the authenticated user.
 ```
 Search for bugs in the PROJECT with high priority:
 search_issues(jql="project=PROJECT AND issuetype=Bug AND priority=High")
+
+Create a new bug in the PROJECT:
+create_issue(project_key="PROJECT", summary="Login button not working", description="Users cannot log in using the login button on the homepage", issue_type="Bug", priority="High")
 
 List the first 5 projects:
 list_projects(limit=5)

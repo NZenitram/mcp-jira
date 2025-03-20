@@ -1,6 +1,6 @@
 name: jira-tools
-description: JIRA integration tools for searching issues and listing projects
-version: 0.1.0
+description: JIRA integration tools for searching issues, creating issues, and listing projects
+version: 0.1.1
 main: src.main:main
 requirements:
   - jira==3.5.2

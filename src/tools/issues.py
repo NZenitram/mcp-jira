@@ -63,3 +63,58 @@ def search_issues(
         "total": len(search_results),
         "issues": formatted_issues
     }
+
+def create_issue(
+    project_key: str,
+    summary: str,
+    description: Optional[str] = None,
+    issue_type: Optional[str] = "Task",
+    priority: Optional[str] = None,
+    assignee: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Create a new JIRA issue.
+    
+    Args:
+        project_key: The key of the project to create the issue in
+        summary: Issue summary
+        description: Issue description
+        issue_type: Type of issue (default: "Task")
+        priority: Priority of the issue
+        assignee: Username to assign the issue to
+        
+    Returns:
+        Dictionary containing the created issue key and URL
+    """
+    # Initialize JIRA client
+    jira = initialize_jira()
+    
+    # Prepare issue fields
+    issue_dict = {
+        'project': {'key': project_key},
+        'summary': summary,
+        'issuetype': {'name': issue_type}
+    }
+    
+    # Add optional fields if provided
+    if description:
+        issue_dict['description'] = description
+    
+    if priority:
+        issue_dict['priority'] = {'name': priority}
+    
+    if assignee:
+        issue_dict['assignee'] = {'name': assignee}
+    
+    # Create the issue
+    new_issue = jira.create_issue(fields=issue_dict)
+    
+    # Prepare response
+    response = {
+        'key': new_issue.key,
+        'summary': summary,
+        'project': project_key,
+        'url': f"{jira._options['server']}/browse/{new_issue.key}"
+    }
+    
+    return response
