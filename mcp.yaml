@@ -1,0 +1,20 @@
+name: jira-tools
+description: JIRA integration tools for searching issues and listing projects
+version: 0.1.0
+main: src.main:main
+requirements:
+  - jira==3.5.2
+  - python-dotenv==1.0.1
+  - fastmcp==0.4.1
+
+env_vars:
+  - name: JIRA_SERVER
+    description: Your JIRA server URL (e.g., https://your-domain.atlassian.net)
+    required: true
+  - name: JIRA_EMAIL
+    description: Email address for JIRA authentication
+    required: true
+  - name: JIRA_API_TOKEN
+    description: API token for JIRA authentication
+    required: true
+    secret: true

@@ -1,0 +1,5 @@
+mcp==1.4.1
+fastmcp==0.4.1
+jira==3.5.2
+python-dotenv==1.0.1
+pytest==7.4.0

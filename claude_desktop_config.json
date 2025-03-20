@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "jira-tools": {
+      "command": "/Users/nickmartinez/mcps/mcp-jira/venv/bin/python3.10",
+      "args": ["/Users/nickmartinez/mcps/mcp-jira/run.py"],
+      "cwd": "/Users/nickmartinez/mcps/mcp-jira",
+      "env": {
+        "PYTHONPATH": "/Users/nickmartinez/mcps/mcp-jira"
+      }
+    }
+  }
+}
