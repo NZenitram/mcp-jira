@@ -30,22 +30,25 @@ def main():
     app = FastMCP(name="jira-tools")
     
     # Import tools
-    from src.tools.issues import search_issues, create_issue, update_issue, delete_issue, add_comment
+    from src.tools.issues import (
+        search_issues, create_issue, update_issue, delete_issue,
+        add_comment, transition_issue, get_issue_details
+    )
     from src.tools.projects import list_projects
     
-    # Register tools using the add_tool method  
-    app.add_tool(
-        list_projects,
-        name="list_projects",
-        description="List JIRA projects for the authenticated user"
-    )
-
+    # Register tools using the add_tool method
     app.add_tool(
         search_issues,
         name="search_issues",
         description="Search for JIRA issues using JQL (JIRA Query Language)"
     )
-  
+    
+    app.add_tool(
+        list_projects,
+        name="list_projects",
+        description="List JIRA projects for the authenticated user"
+    )
+    
     app.add_tool(
         create_issue,
         name="create_issue",
@@ -68,6 +71,18 @@ def main():
         add_comment,
         name="add_comment",
         description="Add a comment to an existing JIRA issue"
+    )
+
+    app.add_tool(
+        transition_issue,
+        name="transition_issue",
+        description="Transition a JIRA issue to a new status"
+    )
+
+    app.add_tool(
+        get_issue_details,
+        name="get_issue_details",
+        description="Get detailed information about a JIRA issue"
     )
     
     # Start the FastMCP application

@@ -298,3 +298,149 @@ def add_comment(
             'url': f"{jira._options['server']}/browse/{issue_key}?focusedCommentId={comment_obj.id}"
         }
     }
+
+def transition_issue(
+    issue_key: str,
+    status: str,
+    comment: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Transition a JIRA issue to a new status.
+    
+    Args:
+        issue_key: The JIRA issue key (e.g., "PROJ-123")
+        status: The target status to transition the issue to
+        comment: Optional comment to add with the transition
+        
+    Returns:
+        Dictionary containing the transition information and status
+    """
+    # Initialize JIRA client
+    jira = initialize_jira()
+    
+    # Get the issue to verify it exists
+    issue = jira.issue(issue_key)
+    
+    # Check if issue exists
+    if not issue:
+        raise ValueError(f"Issue {issue_key} not found")
+    
+    # Get current status
+    current_status = getattr(issue.fields.status, 'name', 'Unknown')
+    
+    # Get available transitions
+    transitions = jira.transitions(issue)
+    transition_id = None
+    available_statuses = [t['name'] for t in transitions]
+    
+    # Find the transition ID for the requested status
+    for t in transitions:
+        if t['name'].lower() == status.lower():
+            transition_id = t['id']
+            break
+    
+    # If transition is not found, raise error with available statuses
+    if not transition_id:
+        raise ValueError(
+            f"Status '{status}' not found. Available transitions from '{current_status}': "
+            f"{', '.join(available_statuses)}"
+        )
+    
+    # Prepare transition data
+    transition_data = {
+        'transition': {'id': transition_id}
+    }
+    
+    # Add comment if provided
+    if comment:
+        transition_data['update'] = {
+            'comment': [{'add': {'body': comment}}]
+        }
+    
+    # Perform the transition
+    jira.transition_issue(issue, transition_id, transition_data)
+    
+    # Refresh issue to get updated status
+    updated_issue = jira.issue(issue_key)
+    new_status = getattr(updated_issue.fields.status, 'name', 'Unknown')
+    
+    # Prepare response
+    return {
+        'status': 'success',
+        'message': f'Issue {issue_key} transitioned from {current_status} to {new_status}',
+        'details': {
+            'issue_key': issue_key,
+            'previous_status': current_status,
+            'new_status': new_status,
+            'comment_added': bool(comment),
+            'url': f"{jira._options['server']}/browse/{issue_key}"
+        }
+    }
+
+def get_issue_details(
+    issue_key: str,
+    include_comments: bool = False
+) -> Dict[str, Any]:
+    """
+    Get detailed information about a JIRA issue.
+    
+    Args:
+        issue_key: The JIRA issue key (e.g., "PROJ-123")
+        include_comments: Whether to include issue comments in the response (default: False)
+        
+    Returns:
+        Dictionary containing detailed issue information
+    """
+    # Initialize JIRA client
+    jira = initialize_jira()
+    
+    # Get the issue
+    issue = jira.issue(issue_key)
+    
+    # Check if issue exists
+    if not issue:
+        raise ValueError(f"Issue {issue_key} not found")
+    
+    # Build basic issue details
+    details = {
+        'key': issue.key,
+        'summary': getattr(issue.fields, 'summary', 'No summary'),
+        'description': getattr(issue.fields, 'description', 'No description'),
+        'status': getattr(issue.fields.status, 'name', 'Unknown'),
+        'issue_type': getattr(issue.fields.issuetype, 'name', 'Unknown'),
+        'project': {
+            'key': getattr(issue.fields.project, 'key', 'Unknown'),
+            'name': getattr(issue.fields.project, 'name', 'Unknown')
+        },
+        'created': str(issue.fields.created),
+        'updated': str(issue.fields.updated),
+        'creator': getattr(issue.fields.creator, 'displayName', 'Unknown'),
+        'reporter': getattr(issue.fields.reporter, 'displayName', 'Unknown'),
+        'assignee': getattr(issue.fields.assignee, 'displayName', 'Unassigned') if issue.fields.assignee else 'Unassigned',
+        'priority': getattr(issue.fields.priority, 'name', 'None') if hasattr(issue.fields, 'priority') else 'None',
+        'labels': getattr(issue.fields, 'labels', []),
+        'url': f"{jira._options['server']}/browse/{issue.key}"
+    }
+    
+    # Add comments if requested
+    if include_comments:
+        comments = []
+        for comment in issue.fields.comment.comments:
+            comments.append({
+                'id': comment.id,
+                'body': comment.body,
+                'author': getattr(comment.author, 'displayName', 'Unknown'),
+                'created': str(comment.created),
+                'updated': str(comment.updated)
+            })
+        details['comments'] = comments
+    
+    # Get available transitions
+    transitions = jira.transitions(issue)
+    details['available_transitions'] = [t['name'] for t in transitions]
+    
+    return {
+        'status': 'success',
+        'message': f'Retrieved details for issue {issue_key}',
+        'details': details
+    }

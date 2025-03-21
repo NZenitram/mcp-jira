@@ -83,6 +83,23 @@ Add a comment to an existing JIRA issue.
 - issue_key: The JIRA issue key (e.g., "PROJ-123")
 - comment: The comment text to add to the issue
 
+### Transition Issue
+
+Transition a JIRA issue to a new status.
+
+**Parameters:**
+- issue_key: The JIRA issue key (e.g., "PROJ-123")
+- status: The target status to transition the issue to (e.g., "In Progress", "Done")
+- comment: Optional comment to add with the transition
+
+### Get Issue Details
+
+Get detailed information about a JIRA issue.
+
+**Parameters:**
+- issue_key: The JIRA issue key (e.g., "PROJ-123")
+- include_comments: Whether to include issue comments in the response (default: False)
+
 ## Example Usage
 
 ```
@@ -103,6 +120,12 @@ list_projects(limit=5)
 
 Add a comment to an issue:
 add_comment(issue_key="PROJECT-123", comment="The fix has been deployed to production")
+
+Transition an issue:
+transition_issue(issue_key="PROJECT-123", status="In Progress", comment="Starting work on this issue")
+
+Get issue details:
+get_issue_details(issue_key="PROJECT-123", include_comments=True)
 ```
 
 ## Development
