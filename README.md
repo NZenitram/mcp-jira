@@ -47,12 +47,41 @@ Create a new JIRA issue in a specified project.
 - priority: Priority of the issue (optional, e.g., "High", "Medium", "Low")
 - assignee: Username to assign the issue to (optional)
 
+### Update Issue
+
+Update an existing JIRA issue with new values.
+
+**Parameters:**
+- issue_key: The JIRA issue key (e.g., "PROJ-123")
+- summary: New summary for the issue (optional)
+- description: New description for the issue (optional)
+- status: New status for the issue (optional, e.g., "In Progress", "Done")
+- priority: New priority for the issue (optional, e.g., "High", "Medium", "Low")
+- assignee: New assignee for the issue (optional)
+- comment: Comment to add to the issue (optional)
+
+### Delete Issue
+
+Delete a JIRA issue (requires explicit confirmation).
+
+**Parameters:**
+- issue_key: The JIRA issue key (e.g., "PROJ-123")
+- confirm: Confirmation flag to prevent accidental deletion, must be set to True
+
 ### List Projects
 
 Lists JIRA projects for the authenticated user.
 
 **Parameters:**
 - limit: Maximum number of projects to return (default: 10)
+
+### Add Comment
+
+Add a comment to an existing JIRA issue.
+
+**Parameters:**
+- issue_key: The JIRA issue key (e.g., "PROJ-123")
+- comment: The comment text to add to the issue
 
 ## Example Usage
 
@@ -63,8 +92,17 @@ search_issues(jql="project=PROJECT AND issuetype=Bug AND priority=High")
 Create a new bug in the PROJECT:
 create_issue(project_key="PROJECT", summary="Login button not working", description="Users cannot log in using the login button on the homepage", issue_type="Bug", priority="High")
 
+Update an existing issue:
+update_issue(issue_key="PROJECT-123", summary="Updated: Login button fixed", status="In Progress", comment="Fixed the CSS styling issue")
+
+Delete an issue:
+delete_issue(issue_key="PROJECT-123", confirm=True)
+
 List the first 5 projects:
 list_projects(limit=5)
+
+Add a comment to an issue:
+add_comment(issue_key="PROJECT-123", comment="The fix has been deployed to production")
 ```
 
 ## Development
