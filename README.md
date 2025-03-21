@@ -6,15 +6,98 @@ A Multi-Claude Program (MCP) for interacting with JIRA APIs through Claude Deskt
 
 - Search JIRA issues using JQL (JIRA Query Language)
 - List JIRA projects for the authenticated user
+- Create, update, and delete JIRA issues
+- Add comments and transition issues between statuses
+- Search for users (with GDPR compliance support)
 
-## Setup
+## Installation
 
-1. Install Claude Desktop
-2. Add this MCP to Claude Desktop
-3. Configure your JIRA credentials:
-   - JIRA_SERVER: Your JIRA instance URL (e.g., https://your-domain.atlassian.net)
-   - JIRA_EMAIL: Your JIRA email address
-   - JIRA_API_TOKEN: Your JIRA API token
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/yourusername/mcp-jira.git
+   cd mcp-jira
+   ```
+
+2. Create and activate a virtual environment:
+   ```bash
+   # On macOS/Linux
+   python -m venv venv
+   source venv/bin/activate
+
+   # On Windows
+   python -m venv venv
+   .\venv\Scripts\activate
+   ```
+
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Create a `.env` file in the project root:
+   ```bash
+   touch .env
+   ```
+
+5. Add your JIRA credentials to the `.env` file:
+   ```
+   JIRA_SERVER=https://your-domain.atlassian.net
+   JIRA_EMAIL=your.email@example.com
+   JIRA_API_TOKEN=your_api_token_here
+   ```
+
+6. Test the installation:
+   ```bash
+   # Run all tests
+   python -m pytest
+
+   # Run a specific test file
+   python -m pytest tests/test_search_issues.py
+   ```
+
+7. Start the MCP server:
+   ```bash
+   python run.py
+   ```
+
+## Environment Setup
+
+### JIRA API Token
+You'll need a JIRA API token to authenticate with your JIRA instance:
+
+1. Log in to your Atlassian account
+2. Go to Account Settings > Security > Create and manage API tokens
+3. Click "Create API token"
+4. Give it a name (e.g., "Claude Desktop Integration")
+5. Click "Create" and save the generated token securely
+
+### GDPR Compliance
+If you're using a JIRA Cloud instance (which is likely in GDPR strict mode):
+
+1. User searches will only match against display names and email addresses
+2. Username-based searches are not supported
+3. Results may be limited based on user permissions
+4. The tool automatically handles GDPR requirements, but you may need to adjust your search patterns
+
+### Troubleshooting
+
+Common issues and solutions:
+
+1. **ModuleNotFoundError: No module named 'src'**
+   ```bash
+   # Run with PYTHONPATH set
+   PYTHONPATH=/path/to/mcp-jira python run.py
+   ```
+
+2. **JIRA API Authentication Error**
+   - Verify your API token is correct
+   - Check that your email matches your Atlassian account
+   - Ensure your JIRA instance URL is correct and includes 'https://'
+
+3. **GDPR-related Errors**
+   - If you see "username parameter not supported" errors, your instance is in GDPR mode
+   - Use display names or email addresses for searching instead of usernames
+   - The tool will automatically adjust the API calls for GDPR compliance
 
 ## Getting a JIRA API Token
 
