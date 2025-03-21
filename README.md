@@ -1,6 +1,6 @@
 # JIRA MCP Tools
 
-A Multi-Claude Program (MCP) for interacting with JIRA APIs through Claude Desktop.
+A Model Context Protocol (MCP) for interacting with JIRA APIs through Claude Desktop.
 
 ## Features
 
