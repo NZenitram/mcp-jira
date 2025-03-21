@@ -100,6 +100,42 @@ Get detailed information about a JIRA issue.
 - issue_key: The JIRA issue key (e.g., "PROJ-123")
 - include_comments: Whether to include issue comments in the response (default: False)
 
+### Search Users
+
+Search for JIRA users by name, email, or username. This tool helps you find users when you need to assign issues or add watchers.
+
+> **Important Note**: For JIRA Cloud instances with GDPR strict mode enabled (which is the default for newer instances), user search must use the `query` parameter instead of `username`. The tool automatically handles this, but you may need to adjust your search patterns accordingly.
+
+Parameters:
+- `query` (str): The search string to match against user display names and email addresses
+  - For GDPR-compliant instances, this searches display names and email addresses
+  - The search is case-insensitive and matches partial strings
+  - Example: "john" will match "John Doe" and "johnny@example.com"
+- `max_results` (int, optional): Maximum number of users to return (default: 10)
+- `include_active_users` (bool, optional): Include active users in search results (default: True)
+- `include_inactive_users` (bool, optional): Include inactive users in search results (default: False)
+
+Example usage:
+```python
+# Search for users with "john" in their display name or email
+search_users(query="john")
+
+# Search for up to 20 users, including inactive ones
+search_users(
+    query="smith",
+    max_results=20,
+    include_inactive_users=True
+)
+```
+
+GDPR Compliance Notes:
+- In GDPR strict mode, user search is more restrictive to protect user privacy
+- The search matches against user display names and email addresses only
+- Exact username matching is not supported
+- The search is always case-insensitive
+- Partial matches are supported (e.g., "jo" will match "John")
+- Results may be limited based on the user's permissions and privacy settings
+
 ## Example Usage
 
 ```

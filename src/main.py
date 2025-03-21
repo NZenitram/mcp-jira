@@ -32,7 +32,7 @@ def main():
     # Import tools
     from src.tools.issues import (
         search_issues, create_issue, update_issue, delete_issue,
-        add_comment, transition_issue, get_issue_details
+        add_comment, transition_issue, get_issue_details, search_users
     )
     from src.tools.projects import list_projects
     
@@ -83,6 +83,12 @@ def main():
         get_issue_details,
         name="get_issue_details",
         description="Get detailed information about a JIRA issue"
+    )
+
+    app.add_tool(
+        search_users,
+        name="search_users",
+        description="Search for JIRA users by name, email, or username"
     )
     
     # Start the FastMCP application

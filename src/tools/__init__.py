@@ -1,1 +1,3 @@
-"""JIRA tools for FastMCP."""
+"""
+MCP JIRA tools subpackage.
+"""

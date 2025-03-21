@@ -444,3 +444,90 @@ def get_issue_details(
         'message': f'Retrieved details for issue {issue_key}',
         'details': details
     }
+
+def search_users(
+    query: str,
+    max_results: Optional[int] = 10,
+    include_active_users: bool = True,
+    include_inactive_users: bool = False
+) -> Dict[str, Any]:
+    """
+    Search for JIRA users by display name or email.
+    
+    For JIRA Cloud instances with GDPR strict mode enabled (which is the default for newer instances),
+    this searches user display names and email addresses only. Username matching is not supported.
+    
+    Args:
+        query: Search string to find users by display name or email
+        max_results: Maximum number of results to return (default: 10)
+        include_active_users: Whether to include active users in results (default: True)
+        include_inactive_users: Whether to include inactive users in results (default: False)
+        
+    Returns:
+        Dictionary containing the list of matching users
+        
+    Raises:
+        ValueError: If the search query is empty or if neither active nor inactive users are included
+    """
+    # Initialize JIRA client
+    jira = initialize_jira()
+    
+    # Validate input
+    if not query:
+        raise ValueError("Search query cannot be empty")
+    
+    if not include_active_users and not include_inactive_users:
+        raise ValueError("At least one of include_active_users or include_inactive_users must be True")
+    
+    try:
+        # Use the GDPR-compliant search endpoint
+        users = jira._get_json('user/search', params={
+            'query': query,
+            'maxResults': max_results,
+            'includeActive': include_active_users,
+            'includeInactive': include_inactive_users
+        })
+        
+        # Format user data
+        formatted_users = []
+        for user in users:
+            user_data = {
+                'account_id': user.get('accountId', 'Unknown'),
+                'display_name': user.get('displayName', 'Unknown'),
+                'email': user.get('emailAddress', 'Unknown'),
+                'active': user.get('active', True),
+                'time_zone': user.get('timeZone', 'Unknown'),
+                'locale': user.get('locale', 'Unknown'),
+                'avatar_url': user.get('avatarUrls', {}).get('48x48') if 'avatarUrls' in user else None
+            }
+            formatted_users.append(user_data)
+        
+        return {
+            'status': 'success',
+            'message': f'Found {len(formatted_users)} users matching "{query}"',
+            'details': {
+                'query': query,
+                'total': len(formatted_users),
+                'users': formatted_users,
+                'search_criteria': {
+                    'include_active': include_active_users,
+                    'include_inactive': include_inactive_users,
+                    'max_results': max_results
+                }
+            }
+        }
+        
+    except Exception as e:
+        # Handle API errors gracefully
+        error_message = str(e)
+        if 'GDPR' in error_message:
+            error_message += "\nThis JIRA instance is in GDPR strict mode, which affects how user searches work."
+        
+        return {
+            'status': 'error',
+            'message': f'Failed to search users: {error_message}',
+            'details': {
+                'query': query,
+                'error': str(e)
+            }
+        }
